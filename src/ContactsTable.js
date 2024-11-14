@@ -1,5 +1,3 @@
-// src/ContactsTable.js
-
 import React from 'react';
 import {
   Table,
@@ -17,7 +15,6 @@ import {
   Grid,
 } from '@mui/material';
 import { Edit, Delete } from '@mui/icons-material';
-import { deleteContact } from './apiService';
 
 const ContactsTable = ({
   contacts,
@@ -40,13 +37,8 @@ const ContactsTable = ({
 
   const handleDelete = async (id) => {
     if (window.confirm('Are you sure you want to delete this contact?')) {
-      try {
-        await deleteContact(id);
-        fetchContacts();
-      } catch (error) {
-        console.error('Error deleting contact:', error);
-        alert('Failed to delete contact. Please try again.');
-      }
+      await fetch(`https://backend-1d5p.vercel.app/api/contacts/${id}`, { method: 'DELETE' });
+      fetchContacts();
     }
   };
 

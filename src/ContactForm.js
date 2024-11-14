@@ -1,8 +1,6 @@
-// src/ContactForm.js
-
 import React, { useState, useEffect } from 'react';
 import { TextField, Button, Box, Typography, Paper, Grid } from '@mui/material';
-import { createContact, updateContact } from './apiService';
+import axios from 'axios';
 
 const ContactForm = ({ fetchContacts, selectedContact, setSelectedContact }) => {
   const [contact, setContact] = useState({
@@ -14,51 +12,38 @@ const ContactForm = ({ fetchContacts, selectedContact, setSelectedContact }) => 
     jobTitle: '',
   });
 
+  
   useEffect(() => {
     if (selectedContact) {
       setContact(selectedContact);
-    } else {
-      // Reset the form when no contact is selected
-      setContact({
-        firstName: '',
-        lastName: '',
-        email: '',
-        phoneNumber: '',
-        company: '',
-        jobTitle: '',
-      });
     }
   }, [selectedContact]);
+
 
   const handleChange = (e) => {
     setContact({ ...contact, [e.target.name]: e.target.value });
   };
 
+ 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    try {
-      if (selectedContact) {
-        // Update existing contact
-        await updateContact(selectedContact._id, contact);
-        setSelectedContact(null);
-      } else {
-        // Create new contact
-        await createContact(contact);
-      }
-      // Reset form
-      setContact({
-        firstName: '',
-        lastName: '',
-        email: '',
-        phoneNumber: '',
-        company: '',
-        jobTitle: '',
-      });
-      fetchContacts();
-    } catch (error) {
-      console.error('Error saving contact:', error);
-      alert('Failed to save contact. Please try again.');
+    if (selectedContact) {
+     
+      await axios.put(`https://backend-1d5p.vercel.app/api/contacts/${selectedContact._id}`, contact);
+      setSelectedContact(null);
+    } else {
+     
+      await axios.post('https://backend-1d5p.vercel.app/api/contacts', contact);
     }
+    setContact({
+      firstName: '',
+      lastName: '',
+      email: '',
+      phoneNumber: '',
+      company: '',
+      jobTitle: '',
+    });
+    fetchContacts();
   };
 
   return (
@@ -68,7 +53,6 @@ const ContactForm = ({ fetchContacts, selectedContact, setSelectedContact }) => 
       </Typography>
       <Box component="form" onSubmit={handleSubmit}>
         <Grid container spacing={2}>
-          {/* First Name */}
           <Grid item xs={12} sm={6}>
             <TextField
               required
@@ -79,7 +63,6 @@ const ContactForm = ({ fetchContacts, selectedContact, setSelectedContact }) => 
               onChange={handleChange}
             />
           </Grid>
-          {/* Last Name */}
           <Grid item xs={12} sm={6}>
             <TextField
               required
@@ -90,7 +73,6 @@ const ContactForm = ({ fetchContacts, selectedContact, setSelectedContact }) => 
               onChange={handleChange}
             />
           </Grid>
-          {/* Email */}
           <Grid item xs={12} sm={6}>
             <TextField
               required
@@ -102,7 +84,6 @@ const ContactForm = ({ fetchContacts, selectedContact, setSelectedContact }) => 
               onChange={handleChange}
             />
           </Grid>
-          {/* Phone Number */}
           <Grid item xs={12} sm={6}>
             <TextField
               required
@@ -113,7 +94,6 @@ const ContactForm = ({ fetchContacts, selectedContact, setSelectedContact }) => 
               onChange={handleChange}
             />
           </Grid>
-          {/* Company */}
           <Grid item xs={12} sm={6}>
             <TextField
               fullWidth
@@ -123,7 +103,6 @@ const ContactForm = ({ fetchContacts, selectedContact, setSelectedContact }) => 
               onChange={handleChange}
             />
           </Grid>
-          {/* Job Title */}
           <Grid item xs={12} sm={6}>
             <TextField
               fullWidth
